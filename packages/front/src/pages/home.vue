@@ -11,10 +11,16 @@
       
       <div class="home__section">
         <BTaskContainer
-          title="Active" 
+          title="Active"
           :active=true
-          :tasks="activeTasks"
+          :tasks="paginationActiveTasks"
         />
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          aria-controls="taskList"
+        ></b-pagination>
       </div>
 
       <div class="home__section">
@@ -23,6 +29,7 @@
           :active=false
           :tasks="archivedTasks"
         />
+        
       </div>
     </main>
 
@@ -46,6 +53,7 @@ import BSquad from '../components/b-squad.vue'
 import BTaskContainer from '../components/b-task-container.vue';
 import BText from '../components/b-text.vue'
 
+
 export default {
   name: 'Home',
 
@@ -55,24 +63,60 @@ export default {
     BTaskContainer,
     BText,
   },
+  data() {
+      return {
+        perPage: 8,
+        currentPage: 1,
+        activeTasks: [],
+      }
+    },
+    computed: {
+      rows() {
+          return this.activeTasks.length
+      }
+    },
+    async mounted() {
+      const store = useStore();
+      const squad = computed(() => {
+        const req = store.getters.getSquadActive;
+        if(req.id) store.dispatch('gatherTasks', req.id);
+  
+        return req;
+      });
+
+      this.activeTasks = computed(() => store.getters.getEnabledTasks);
+
+      this.archivedTasks = computed(() => store.getters.getDisabledTasks);
+      
+      console.log(this.items);
+  },
 };
 </script>
 
 <script setup>
-const store = useStore();
 
-const squad = computed(() => {
-  const req = store.getters.getSquadActive;
-  if(req.id) store.dispatch('gatherTasks', req.id);
-  
-  return req;
-});
+  const store = useStore();
 
-const activeTasks = computed(() => store.getters.getEnabledTasks);
+  const squad = computed(() => {
+    const req = store.getters.getSquadActive;
+    if(req.id) store.dispatch('gatherTasks', req.id);
+    
+    return req;
+  });
 
-const archivedTasks = computed(() => store.getters.getDisabledTasks);
+  const paginationIndex = 1;
+  const pageSize = 8;
+  const activeTasks = computed(() => store.getters.getEnabledTasks);
 
-onMounted(store.dispatch('gatherSquadList'));
+  const archivedTasks = computed(() => store.getters.getDisabledTasks);
+
+  var paginationActiveTasks = activeTasks.value.slice(paginationIndex-1, paginationIndex + pageSize-1);
+  var paginationArchivedTasks = archivedTasks.value.slice(paginationIndex-1, paginationIndex + pageSize-1);
+
+  const tasksLength = activeTasks.value.length;
+
+
+  onMounted(store.dispatch('gatherSquadList'));
 </script>
 
 <style lang="scss" scoped>

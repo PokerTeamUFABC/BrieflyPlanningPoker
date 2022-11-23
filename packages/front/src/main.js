@@ -9,4 +9,5 @@ import router from './router/index';
 
 library.add(faArrowRotateRight, faCircleCheck, faCircleChevronDown, faCircleChevronUp, faCirclePlus, faGear, faRightFromBracket, faSquareCaretDown, faTrashCan, faUserCheck, faXmark, faCircleXmark);
 
+const app = createApp();
 createApp(App).use(router).use(store).component('font-awesome-icon', FontAwesomeIcon).mount('#app');
