@@ -27,9 +27,15 @@
       </BModal>
     </div>
 
-    <BDivisor color="gray-30" />
+    <BDivisor
+      v-if="squads?.length > 0"
+      color="gray-30"
+    />
 
-    <div class="b-sidebar__squad-wrapper">
+    <div
+      v-if="squads?.length > 0"
+      class="b-sidebar__squad-wrapper"
+    >
       <div
         v-for="(squad, index) in squads.slice().reverse()"
         :key="index"
@@ -42,6 +48,17 @@
           @click="store.dispatch('gatherSquad', squad.id)"
         />
       </div>
+    </div>
+
+    <BDivisor color="gray-30" />
+
+    <div class="b-sidebar__user-wrapper">
+      <a href="/user-account">
+        <font-awesome-icon
+          class="b-sidebar__user-image"
+          icon="fa-regular fa-user"
+        />
+      </a>
     </div>
   </div>
 </template>
@@ -127,6 +144,26 @@ const toggleModal = () => {
 
   .b-sidebar__squad {
     width: 100%;
+  }
+}
+
+.b-sidebar__user-wrapper {
+  cursor: pointer;
+  margin-top: auto;
+  text-align: center;
+
+  height: var(--unit-1200);
+  width: var(--unit-1200);
+
+  @media (max-width: 768px) {
+    height: var(--unit-1100);
+    width: var(--unit-1100);
+  }
+
+  & .b-sidebar__user-image {
+    height: 80%;
+    width: 80%;
+    color: var(--color-white);
   }
 }
 </style>
